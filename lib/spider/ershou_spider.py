@@ -28,7 +28,8 @@ class ErShouSpider(BaseSpider):
         :return: None
         """
         district_name = area_dict.get(area_name, "")
-        csv_file = self.today_path + "/{0}_{1}.csv".format(district_name, area_name)
+        csv_file = self.today_path + \
+            "/{0}_{1}.csv".format(district_name, area_name)
         with open(csv_file, "w") as f:
             # 开始获得需要的板块数据
             ershous = self.get_area_ershou_info(city_name, area_name)
@@ -41,7 +42,8 @@ class ErShouSpider(BaseSpider):
                 for ershou in ershous:
                     # print(date_string + "," + xiaoqu.text())
                     f.write(self.date_string + "," + ershou.text() + "\n")
-        print("Finish crawl area: " + area_name + ", save data to : " + csv_file)
+        print("Finish crawl area: " + area_name +
+              ", save data to : " + csv_file)
 
     @staticmethod
     def get_area_ershou_info(city_name, area_name):
@@ -59,7 +61,8 @@ class ErShouSpider(BaseSpider):
         chinese_area = chinese_area_dict.get(area_name, "")
 
         ershou_list = list()
-        page = 'http://{0}.{1}.com/ershoufang/{2}/'.format(city_name, SPIDER_NAME, area_name)
+        page = 'http://{0}.{1}.com/ershoufang/{2}/'.format(
+            city_name, SPIDER_NAME, area_name)
         print(page)  # 打印版块页面地址
         headers = create_headers()
         response = requests.get(page, timeout=10, headers=headers)
@@ -77,7 +80,8 @@ class ErShouSpider(BaseSpider):
 
         # 从第一页开始,一直遍历到最后一页
         for num in range(1, total_page + 1):
-            page = 'http://{0}.{1}.com/ershoufang/{2}/pg{3}'.format(city_name, SPIDER_NAME, area_name, num)
+            page = 'http://{0}.{1}.com/ershoufang/{2}/pg{3}'.format(
+                city_name, SPIDER_NAME, area_name, num)
             print(page)  # 打印每一页的地址
             headers = create_headers()
             BaseSpider.random_delay()
@@ -91,24 +95,32 @@ class ErShouSpider(BaseSpider):
                 price = house_elem.find('div', class_="totalPrice")
                 name = house_elem.find('div', class_='title')
                 desc = house_elem.find('div', class_="houseInfo")
-                pic = house_elem.find('a', class_="img").find('img', class_="lj-lazy")
+                pic = house_elem.find('a', class_="img").find(
+                    'img', class_="lj-lazy")
+                unitPrice = house_elem.find(
+                    'div', class_="unitPrice")
+                house_id = unitPrice.get("data-hid")
 
                 # 继续清理数据
-                price = price.text.strip()
+                price = price.text.replace("\n", "").strip()
+                unitPrice = unitPrice.text.strip()
+                unitPrice = unitPrice.replace(",", "")
                 name = name.text.replace("\n", "")
                 desc = desc.text.replace("\n", "").strip()
+                desc = ' '.join(desc.split())  # 去除连续空格
                 pic = pic.get('data-original').strip()
                 # print(pic)
 
-
                 # 作为对象保存
-                ershou = ErShou(chinese_district, chinese_area, name, price, desc, pic)
+                ershou = ErShou(chinese_district, chinese_area,
+                                house_id, name, price, unitPrice, desc, pic)
                 ershou_list.append(ershou)
         return ershou_list
 
     def start(self):
         city = get_city()
-        self.today_path = create_date_path("{0}/ershou".format(SPIDER_NAME), city, self.date_string)
+        self.today_path = create_date_path(
+            "{0}/ershou".format(SPIDER_NAME), city, self.date_string)
 
         t1 = time.time()  # 开始计时
 
@@ -139,7 +151,8 @@ class ErShouSpider(BaseSpider):
         # 针对每个板块写一个文件,启动一个线程来操作
         pool_size = thread_pool_size
         pool = threadpool.ThreadPool(pool_size)
-        my_requests = threadpool.makeRequests(self.collect_area_ershou_data, args)
+        my_requests = threadpool.makeRequests(
+            self.collect_area_ershou_data, args)
         [pool.putRequest(req) for req in my_requests]
         pool.wait()
         pool.dismissWorkers(pool_size, do_join=True)  # 完成后退出
@@ -147,7 +160,8 @@ class ErShouSpider(BaseSpider):
         # 计时结束，统计结果
         t2 = time.time()
         print("Total crawl {0} areas.".format(len(areas)))
-        print("Total cost {0} second to crawl {1} data items.".format(t2 - t1, self.total_num))
+        print("Total cost {0} second to crawl {1} data items.".format(
+            t2 - t1, self.total_num))
 
 
 if __name__ == '__main__':
