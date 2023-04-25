@@ -48,6 +48,7 @@ def get_districts(city):
     for index, name in enumerate(en_names):
         chinese_city_district_dict[name] = ch_names[index]
         # print(name + ' -> ' + ch_names[index])
+    en_names.sort()
     return en_names
 
 
