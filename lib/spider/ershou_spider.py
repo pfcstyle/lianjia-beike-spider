@@ -105,7 +105,8 @@ class ErShouSpider(BaseSpider):
                 price = price.text.replace("\n", "").strip()
                 unitPrice = unitPrice.text.strip()
                 unitPrice = unitPrice.replace(",", "")
-                name = name.text.replace("\n", "")
+                name = name.text.replace("\n", "").replace(
+                    ",", "").replace("，", "")
                 desc = desc.text.replace("\n", "").strip()
                 desc = ' '.join(desc.split())  # 去除连续空格
                 pic = pic.get('data-original').strip()
