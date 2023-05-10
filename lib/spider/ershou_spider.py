@@ -118,6 +118,10 @@ class ErShouSpider(BaseSpider):
                 ershou_list.append(ershou)
         return ershou_list
 
+    @staticmethod
+    def get_house_url(city: str, house_id: str):
+        return "https://{0}.{1}.com/ershoufang/{2}.html".format(city, SPIDER_NAME, house_id)
+
     def start(self):
         city = get_city()
         self.today_path = create_date_path(
