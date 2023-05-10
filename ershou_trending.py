@@ -70,16 +70,18 @@ class ErshouTrending:
         with open(trending_csv_file, "w") as f:
             for house_id, (start_price, end_price) in price_down.items():
                 _, pic, csv_row = end_prices.get(house_id)
-                f.write("降价房源: {}📉{} {}\n".format(
-                    start_price, end_price, csv_row))
+                f.write("降价房源: {}📉{} {} {}\n".format(
+                    start_price, end_price, ErShouSpider.get_house_url(city, house_id), csv_row))
             for house_id, (start_price, end_price) in price_up.items():
                 _, pic, csv_row = end_prices.get(house_id)
-                f.write("涨价房源: {}💹{} {}\n".format(
-                    start_price, end_price, csv_row))
+                f.write("涨价房源: {}💹{} {} {}\n".format(
+                    start_price, end_price, ErShouSpider.get_house_url(city, house_id), csv_row))
             for house_id, csv_row in shangjia_houses.items():
-                f.write("✅上架房源: {}\n".format(csv_row))
+                f.write("✅上架房源: {} {}\n".format(
+                    ErShouSpider.get_house_url(city, house_id), csv_row))
             for house_id, csv_row in xiajia_houses.items():
-                f.write("⛔️下架房源: {}\n".format(csv_row))
+                f.write("⛔️下架房源: {} {}\n".format(
+                    ErShouSpider.get_house_url(city, house_id), csv_row))
 
         print("save trending data to : " + trending_csv_file)
 
