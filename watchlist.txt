@@ -3,5 +3,6 @@
 ['570万'], ['20230426'], https://bj.ke.com/ershoufang/101118931422.html, 20230426,昌平,回龙观,101118931422,中间楼层采光视野好客厅多个东窗卫生间带窗户。必看好房,570万,43625元/平,中楼层 (共7层) 3室2厅 | 130.66平米 | 南 北,https://ke-image.ljcdn.com/110000-inspection/cc3a08d5-3e85-4fd9-a8ac-47ce5bb41309_1000.jpg!m_fill,w_280,h_210,f_jpg?from=ke.com
 ['632万', '619万', '609万'], ['20230426', '20230429', '20230524'], https://bj.ke.com/ershoufang/101117078047.html, 20230524,昌平,回龙观,101117078047,龙腾苑三区 商品房 中间位置2层房主自荐,609万,51272元/平,低楼层 (共6层) | 2002年建 | 3室1厅 | 118.78平米 | 南 北,https://ke-image.ljcdn.com/110000-inspection/pc1_8NmHYI9YR.jpg!m_fill,w_280,h_210,f_jpg?from=ke.com
 ['750万', '725万', '698万'], ['20230426', '20230505', '20230524'], https://bj.ke.com/ershoufang/101118979849.html, 20230524,昌平,回龙观,101118979849,房子满五年唯一挑空复式户型必看好房,698万,32731元/平,高楼层 (共6层) 3室1厅 | 213.26平米 | 南 北,https://ke-image.ljcdn.com/110000-inspection/7be5cf18-de5e-4ab6-9b80-6d41118c8e04_1000.jpg!m_fill,w_280,h_210,f_jpg?from=ke.com
+['540万', '520万'], ['20230426', '20230525'], https://bj.ke.com/ershoufang/101115483199.html, 20230525,昌平,回龙观,101115483199,北京人家 电梯全明户型 满五唯一,520万,50777元/平,低楼层 (共10层) | 2005年建 | 2室1厅 | 102.41平米 | 南 北,https://ke-image.ljcdn.com/110000-inspection/pc1_tGLZeNLhe.jpg!m_fill,w_280,h_210,f_jpg?from=ke.com
 
 
