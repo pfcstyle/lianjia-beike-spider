@@ -53,9 +53,11 @@ class ErshouTrending:
                 continue
 
             end_price, pic, _ = end_prices.get(house_id)
-            if end_price > start_price:
+            start_price_f = float(start_price.split("万")[0])
+            end_price_f = float(end_price.split("万")[0])
+            if end_price_f > start_price_f:
                 price_up[house_id] = (start_price, end_price)
-            elif end_price < start_price:
+            elif end_price_f < start_price_f:
                 price_down[house_id] = (start_price, end_price)
 
         print("新增房源数量: {}".format(len(shangjia_houses)))
