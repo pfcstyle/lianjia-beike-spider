@@ -26,6 +26,10 @@ class ErshouTrending:
                 with open(csv_file, 'r') as read_obj:
                     csv_reader = reader(read_obj)
                     for row in csv_reader:
+                        if len(row) < 8:
+                            print("invalid data in file:{} row:{}".format(
+                                csv_file, ','.join(row)))
+                            continue
                         house_id, price, pic = row[3], row[5], row[7]
                         ershou_price_dict[house_id] = (
                             price, pic, ",".join(row))
