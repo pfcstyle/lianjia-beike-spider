@@ -28,7 +28,8 @@ class XiaoQuBaseSpider(BaseSpider):
         :return: None
         """
         district_name = area_dict.get(area_name, "")
-        csv_file = self.today_path + "/{0}_{1}.csv".format(district_name, area_name)
+        csv_file = self.today_path + \
+            "/{0}_{1}.csv".format(district_name, area_name)
         with open(csv_file, "w") as f:
             # 开始获得需要的板块数据
             xqs = self.get_xiaoqu_info(city_name, area_name)
@@ -40,8 +41,10 @@ class XiaoQuBaseSpider(BaseSpider):
             if fmt == "csv":
                 for xiaoqu in xqs:
                     f.write(self.date_string + "," + xiaoqu.text() + "\n")
-        print("Finish crawl area: " + area_name + ", save data to : " + csv_file)
-        logger.info("Finish crawl area: " + area_name + ", save data to : " + csv_file)
+        print("Finish crawl area: " + area_name +
+              ", save data to : " + csv_file)
+        logger.info("Finish crawl area: " + area_name +
+                    ", save data to : " + csv_file)
 
     @staticmethod
     def get_xiaoqu_info(city, area):
@@ -71,7 +74,8 @@ class XiaoQuBaseSpider(BaseSpider):
         # 从第一页开始,一直遍历到最后一页
         for i in range(1, total_page + 1):
             headers = create_headers()
-            page = 'http://{0}.{1}.com/xiaoqu/{2}/pg{3}'.format(city, SPIDER_NAME, area, i)
+            page = 'http://{0}.{1}.com/xiaoqu/{2}/pg{3}'.format(
+                city, SPIDER_NAME, area, i)
             print(page)  # 打印版块页面地址
             BaseSpider.random_delay()
             response = requests.get(page, timeout=10, headers=headers)
@@ -83,21 +87,28 @@ class XiaoQuBaseSpider(BaseSpider):
             for house_elem in house_elems:
                 price = house_elem.find('div', class_="totalPrice")
                 name = house_elem.find('div', class_='title')
-                on_sale = house_elem.find('div', class_="xiaoquListItemSellCount")
+                on_sale = house_elem.find(
+                    'div', class_="xiaoquListItemSellCount")
+                position = house_elem.find(
+                    'div', class_="positionInfo")
 
                 # 继续清理数据
                 price = price.text.strip()
                 name = name.text.replace("\n", "")
                 on_sale = on_sale.text.replace("\n", "").strip()
+                position = ''.join(position.text.replace(
+                    "\n", "").strip().split())
 
                 # 作为对象保存
-                xiaoqu = XiaoQu(chinese_district, chinese_area, name, price, on_sale)
+                xiaoqu = XiaoQu(chinese_district, chinese_area,
+                                name, price, on_sale, position)
                 xiaoqu_list.append(xiaoqu)
         return xiaoqu_list
 
     def start(self):
         city = get_city()
-        self.today_path = create_date_path("{0}/xiaoqu".format(SPIDER_NAME), city, self.date_string)
+        self.today_path = create_date_path(
+            "{0}/xiaoqu".format(SPIDER_NAME), city, self.date_string)
         t1 = time.time()  # 开始计时
 
         # 获得城市有多少区列表, district: 区县
@@ -127,7 +138,8 @@ class XiaoQuBaseSpider(BaseSpider):
         # 针对每个板块写一个文件,启动一个线程来操作
         pool_size = thread_pool_size
         pool = threadpool.ThreadPool(pool_size)
-        my_requests = threadpool.makeRequests(self.collect_area_xiaoqu_data, args)
+        my_requests = threadpool.makeRequests(
+            self.collect_area_xiaoqu_data, args)
         [pool.putRequest(req) for req in my_requests]
         pool.wait()
         pool.dismissWorkers(pool_size, do_join=True)  # 完成后退出
@@ -135,7 +147,8 @@ class XiaoQuBaseSpider(BaseSpider):
         # 计时结束，统计结果
         t2 = time.time()
         print("Total crawl {0} areas.".format(len(areas)))
-        print("Total cost {0} second to crawl {1} data items.".format(t2 - t1, self.total_num))
+        print("Total cost {0} second to crawl {1} data items.".format(
+            t2 - t1, self.total_num))
 
 
 if __name__ == "__main__":

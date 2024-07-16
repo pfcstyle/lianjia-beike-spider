@@ -49,11 +49,11 @@ class ErshouTrending:
         for house_id, (end_price, pic, csv_row) in end_prices.items():
             # print("house_id: {}, end_price: {}\n".format(house_id, end_price))
             if start_prices.get(house_id, None) is None:
-                shangjia_houses[house_id] = csv_row
+                shangjia_houses[house_id] = (end_price, csv_row)
 
         for house_id, (start_price, pic, csv_row) in start_prices.items():
             if end_prices.get(house_id, None) is None:
-                xiajia_houses[house_id] = csv_row
+                xiajia_houses[house_id] = (start_price, csv_row)
                 continue
 
             end_price, pic, _ = end_prices.get(house_id)
@@ -82,12 +82,12 @@ class ErshouTrending:
                 _, pic, csv_row = end_prices.get(house_id)
                 f.write("涨价房源: {}💹{} {} {}\n".format(
                     start_price, end_price, ErShouSpider.get_house_url(city, house_id), csv_row))
-            for house_id, csv_row in shangjia_houses.items():
-                f.write("✅上架房源: {} {}\n".format(
-                    ErShouSpider.get_house_url(city, house_id), csv_row))
-            for house_id, csv_row in xiajia_houses.items():
-                f.write("⛔️下架房源: {} {}\n".format(
-                    ErShouSpider.get_house_url(city, house_id), csv_row))
+            for house_id, (end_price, csv_row) in shangjia_houses.items():
+                f.write("✅上架房源: {} {} {}\n".format(
+                    end_price, ErShouSpider.get_house_url(city, house_id), csv_row))
+            for house_id, (start_price, csv_row) in xiajia_houses.items():
+                f.write("⛔️下架房源: {} {} {}\n".format(
+                    start_price, ErShouSpider.get_house_url(city, house_id), csv_row))
 
         print("save trending data to : " + trending_csv_file)
 
