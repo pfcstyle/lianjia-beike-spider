@@ -8,7 +8,7 @@ import re
 import threadpool
 from bs4 import BeautifulSoup
 from lib.item.xiaoqu import *
-from lib.zone.city import get_city
+from lib.zone.city import get_city, get_chinese_city
 from lib.spider.base_spider import *
 from lib.utility.date import *
 from lib.utility.path import *
@@ -38,6 +38,7 @@ class XiaoQuBaseSpider(BaseSpider):
             logger.info("There is no data for xiaoqu {0}.".format(area_name))
             return
         with open(csv_file, "w") as f:
+            f.write("date,city_ch,district,area,xiaoqu,price,sale,type\n")
             # 锁定
             if self.mutex.acquire(1):
                 self.total_num += len(xqs)
@@ -54,6 +55,7 @@ class XiaoQuBaseSpider(BaseSpider):
     @staticmethod
     def get_xiaoqu_info(city, area):
         total_page = 1
+        chinese_city = get_chinese_city(city)
         district = area_dict.get(area, "")
         chinese_district = get_chinese_district(district)
         chinese_area = chinese_area_dict.get(area, "")
@@ -98,21 +100,20 @@ class XiaoQuBaseSpider(BaseSpider):
                     'div', class_="positionInfo")
 
                 # 继续清理数据
-                price = price.text.strip()
-                name = name.text.replace("\n", "")
+                price = price.text.strip().replace("/m2", "")
+                name = name.text.replace("\n", "").replace(",", ";")
                 on_sale = on_sale.text.replace("\n", "").strip()
-                position = ''.join(position.text.replace(
+                type = ''.join(position.text.replace(
                     "\n", "").strip().split())
 
                 # 作为对象保存
-                xiaoqu = XiaoQu(chinese_district, chinese_area,
-                                name, price, on_sale, position)
+                xiaoqu = XiaoQu(chinese_city, chinese_district, chinese_area,
+                                name, price, on_sale, type)
                 xiaoqu_list.append(xiaoqu)
         return xiaoqu_list
 
     def start(self, city=None):
-        if city is None:
-            city = get_city()
+        city = get_city(city=city)
         self.today_path = create_date_path(
             "{0}/xiaoqu".format(SPIDER_NAME), city, self.date_string)
         t1 = time.time()  # 开始计时
@@ -161,5 +162,5 @@ if __name__ == "__main__":
     # urls = get_xiaoqu_area_urls()
     # print urls
     # get_xiaoqu_info("sh", "beicai")
-    spider = XiaoQuBaseSpider("lianjia")
+    spider = XiaoQuBaseSpider("ke")
     spider.start(city='bj')
