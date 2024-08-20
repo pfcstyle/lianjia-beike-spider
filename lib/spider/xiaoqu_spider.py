@@ -162,5 +162,5 @@ if __name__ == "__main__":
     # urls = get_xiaoqu_area_urls()
     # print urls
     # get_xiaoqu_info("sh", "beicai")
-    spider = XiaoQuBaseSpider("ke")
+    spider = XiaoQuBaseSpider(SPIDER_NAME)
     spider.start(city='bj')
