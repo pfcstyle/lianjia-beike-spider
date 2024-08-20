@@ -13,6 +13,9 @@ import os
 import time
 from lib.utility.version import PYTHON_3
 
+data_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data')
+bj_csv_dir = os.path.join(data_dir, 'xiaoqu/bj')
+
 if __name__ == '__main__':
     try:
         import webbrowser as web
@@ -32,7 +35,8 @@ if __name__ == '__main__':
             print(e)
 
     # 注意，已经将分割符号转换成分号，因为有的小区名中有逗号
-    df = pd.read_csv("xiaoqu.csv", encoding="utf-8", sep=";")
+    csv_file = os.path.join(bj_csv_dir, "20240528/changping_changpingqita1.csv")
+    df = pd.read_csv(csv_file, encoding="utf-8")
 
     # 打印总行数
     print("row number is {0}".format(len(df.index)))

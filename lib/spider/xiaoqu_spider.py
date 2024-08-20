@@ -30,9 +30,14 @@ class XiaoQuBaseSpider(BaseSpider):
         district_name = area_dict.get(area_name, "")
         csv_file = self.today_path + \
             "/{0}_{1}.csv".format(district_name, area_name)
-        with open(csv_file, "w") as f:
+        
             # 开始获得需要的板块数据
-            xqs = self.get_xiaoqu_info(city_name, area_name)
+        xqs = self.get_xiaoqu_info(city_name, area_name)
+        if len(xqs) == 0:
+            print("There is no data for xiaoqu {0}.".format(area_name))
+            logger.info("There is no data for xiaoqu {0}.".format(area_name))
+            return
+        with open(csv_file, "w") as f:
             # 锁定
             if self.mutex.acquire(1):
                 self.total_num += len(xqs)
@@ -105,8 +110,9 @@ class XiaoQuBaseSpider(BaseSpider):
                 xiaoqu_list.append(xiaoqu)
         return xiaoqu_list
 
-    def start(self):
-        city = get_city()
+    def start(self, city=None):
+        if city is None:
+            city = get_city()
         self.today_path = create_date_path(
             "{0}/xiaoqu".format(SPIDER_NAME), city, self.date_string)
         t1 = time.time()  # 开始计时
@@ -156,4 +162,4 @@ if __name__ == "__main__":
     # print urls
     # get_xiaoqu_info("sh", "beicai")
     spider = XiaoQuBaseSpider("lianjia")
-    spider.start()
+    spider.start(city='bj')
