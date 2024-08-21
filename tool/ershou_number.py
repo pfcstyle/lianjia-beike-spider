@@ -5,7 +5,7 @@
 # 获取城市挂牌二手房数量
 
 import time
-from lib.spider.base_spider import SPIDER_NAME
+from lib.spider.base_spider import SPIDER_NAME, BaseSpider
 from bs4 import BeautifulSoup
 from lib.zone.city import cities
 import requests
@@ -16,7 +16,7 @@ numbers = dict()
 def get_ershou_number(city):
     url = "https://{0}.{1}.com/ershoufang/".format(city, SPIDER_NAME)
     print(url)
-    response = requests.get(url)
+    response = BaseSpider.request_get(url)
     html = response.content
     soup = BeautifulSoup(html, "lxml")
     element = soup.find('h2', class_='total')

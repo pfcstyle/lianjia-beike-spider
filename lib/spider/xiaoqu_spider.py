@@ -30,7 +30,8 @@ class XiaoQuBaseSpider(BaseSpider):
         district_name = area_dict.get(area_name, "")
         csv_file = self.today_path + \
             "/{0}_{1}.csv".format(district_name, area_name)
-        
+        if os.path.exists(csv_file):
+            return
             # 开始获得需要的板块数据
         xqs = self.get_xiaoqu_info(city_name, area_name)
         if len(xqs) == 0:
@@ -65,7 +66,7 @@ class XiaoQuBaseSpider(BaseSpider):
         logger.info(page)
 
         headers = create_headers()
-        response = requests.get(page, timeout=10, headers=headers)
+        response = BaseSpider.request_get(page, timeout=10, headers=headers)
         html = response.content
         soup = BeautifulSoup(html, "lxml")
 
@@ -85,7 +86,7 @@ class XiaoQuBaseSpider(BaseSpider):
                 city, SPIDER_NAME, area, i)
             print(page)  # 打印版块页面地址
             BaseSpider.random_delay()
-            response = requests.get(page, timeout=10, headers=headers)
+            response = BaseSpider.request_get(page, timeout=10, headers=headers)
             html = response.content
             soup = BeautifulSoup(html, "lxml")
 
@@ -141,7 +142,6 @@ class XiaoQuBaseSpider(BaseSpider):
         city_list = [city for i in range(len(areas))]
         args = zip(zip(city_list, areas), nones)
         # areas = areas[0: 1]
-
         # 针对每个板块写一个文件,启动一个线程来操作
         pool_size = thread_pool_size
         pool = threadpool.ThreadPool(pool_size)

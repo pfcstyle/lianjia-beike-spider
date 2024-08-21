@@ -10,7 +10,7 @@ import time
 from lib.zone.city import get_chinese_city
 from lib.request.headers import create_headers
 from lib.utility.date import get_date_string
-from lib.spider.base_spider import SPIDER_NAME
+from lib.spider.base_spider import SPIDER_NAME, BaseSpider
 from lib.utility.path import DATA_PATH
 from tomorrow import threads
 import requests
@@ -68,7 +68,7 @@ def download_images(save_path: str, image_url: str):
      :param image_url: 图片的下载的url地址
     :return:
     """
-    resp = requests.get(image_url)
+    resp = BaseSpider.request_get(image_url)
     fp = open(save_path, 'wb')
     fp.write(resp.content)
     fp.close()

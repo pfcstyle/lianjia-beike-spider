@@ -48,7 +48,7 @@ class LouPanBaseSpider(BaseSpider):
         page = 'http://{0}.fang.{1}.com/loupan/'.format(city_name, SPIDER_NAME)
         print(page)
         headers = create_headers()
-        response = requests.get(page, timeout=10, headers=headers)
+        response = BaseSpider.request_get(page, timeout=10, headers=headers)
         html = response.content
         soup = BeautifulSoup(html, "lxml")
 
@@ -68,7 +68,7 @@ class LouPanBaseSpider(BaseSpider):
             page = 'http://{0}.fang.{1}.com/loupan/pg{2}'.format(city_name, SPIDER_NAME, i)
             print(page)
             BaseSpider.random_delay()
-            response = requests.get(page, timeout=10, headers=headers)
+            response = BaseSpider.request_get(page, timeout=10, headers=headers)
             html = response.content
             soup = BeautifulSoup(html, "lxml")
 

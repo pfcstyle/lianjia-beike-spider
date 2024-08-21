@@ -6,12 +6,14 @@
 # 爬虫名常量，用来设置爬取哪个站点
 
 import threading
+import requests
 from lib.zone.city import lianjia_cities, beike_cities
 from lib.utility.date import *
 import lib.utility.version
 import random
 
 thread_pool_size = 6
+proxy_pool_url = 'http://127.0.0.1:5010'  # 参考proxy_pool项目，本地搭建的代理池地址
 
 # 防止爬虫被禁，随机延迟设定
 # 如果不想delay，就设定False，
@@ -70,3 +72,29 @@ class BaseSpider(object):
         :return: 中文
         """
         return self.cities.get(en, None)
+    
+    @staticmethod
+    def get_proxy(isHttps: bool):
+        return requests.get(f"{proxy_pool_url}/get?type={'https' if isHttps else 'http'}").json()
+
+    @staticmethod
+    def delete_proxy(proxy):
+        requests.get(f"{proxy_pool_url}/delete?proxy={proxy}")
+    
+    @staticmethod
+    def request_get(url: str, timeout=10, headers=None):
+        if proxy_pool_url is None:
+            return requests.get(url, timeout=timeout, headers=headers)
+        proxy = BaseSpider.get_proxy(url.startswith('https://')).get("proxy")
+        retry_count = 3
+        while retry_count > 0:
+            
+            try:
+                response = requests.get(url, timeout=timeout, headers=headers, proxies={"http": f"http://{proxy}", "https": f"https://{proxy}"}, verify=False)
+                # 使用代理访问
+                return response
+            except Exception as e:
+                retry_count -= 1
+        # 无效代理， 删除代理池中代理
+        BaseSpider.delete_proxy(proxy)
+        return None

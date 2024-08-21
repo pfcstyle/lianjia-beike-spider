@@ -59,7 +59,7 @@ class ZuFangBaseSpider(BaseSpider):
         print(page)
 
         headers = create_headers()
-        response = requests.get(page, timeout=10, headers=headers)
+        response = BaseSpider.request_get(page, timeout=10, headers=headers)
         html = response.content
         soup = BeautifulSoup(html, "lxml")
 
@@ -84,7 +84,7 @@ class ZuFangBaseSpider(BaseSpider):
             page = 'http://{0}.{1}.com/zufang/{2}/pg{3}'.format(city_name, SPIDER_NAME, area_name, num)
             print(page)
             BaseSpider.random_delay()
-            response = requests.get(page, timeout=10, headers=headers)
+            response = BaseSpider.request_get(page, timeout=10, headers=headers)
             html = response.content
             soup = BeautifulSoup(html, "lxml")
 
