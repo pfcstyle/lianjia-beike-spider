@@ -49,6 +49,7 @@ def get_districts(city):
         chinese_city_district_dict[name] = ch_names[index]
         # print(name + ' -> ' + ch_names[index])
     en_names.sort()
+    en_names = ['chaoyang', 'dongcheng', 'haidian', 'tongzhou', 'xicheng']
     return en_names
 
 

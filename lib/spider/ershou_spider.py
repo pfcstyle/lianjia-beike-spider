@@ -30,9 +30,16 @@ class ErShouSpider(BaseSpider):
         district_name = area_dict.get(area_name, "")
         csv_file = self.today_path + \
             "/{0}_{1}.csv".format(district_name, area_name)
+        if os.path.exists(csv_file):
+            return
+        # 开始获得需要的板块数据
+        ershous = self.get_area_ershou_info(city_name, area_name)
+        if len(ershous) == 0:
+            print("There is no data for ershous {0}.".format(area_name))
+            logger.info("There is no data for ershous {0}.".format(area_name))
+            return
         with open(csv_file, "w") as f:
-            # 开始获得需要的板块数据
-            ershous = self.get_area_ershou_info(city_name, area_name)
+            f.write("date,district,area,houseid,name,xiaoqu,price,unit_price,desc,tags,pic\n")
             # 锁定，多线程读写
             if self.mutex.acquire(1):
                 self.total_num += len(ershous)
@@ -94,7 +101,12 @@ class ErShouSpider(BaseSpider):
             for house_elem in house_elements:
                 price = house_elem.find('div', class_="totalPrice")
                 name = house_elem.find('div', class_='title')
+                xiaoqu = house_elem.find('div', class_='flood')
                 desc = house_elem.find('div', class_="houseInfo")
+                tag_div = house_elem.find('div', class_="tag")
+                tags = ''
+                if tag_div is not None:
+                    tags = '|'.join([x.text for x in tag_div.find_all('span')])
                 pic = house_elem.find('a', class_="img").find(
                     'img', class_="lj-lazy")
                 unitPrice = house_elem.find(
@@ -107,6 +119,7 @@ class ErShouSpider(BaseSpider):
                 unitPrice = unitPrice.replace(",", "")
                 name = name.text.replace("\n", "").replace(
                     ",", "").replace("，", "")
+                xiaoqu = xiaoqu.text.split('-')[0].strip()
                 desc = desc.text.replace("\n", "").strip()
                 desc = ' '.join(desc.split())  # 去除连续空格
                 pic = pic.get('data-original').strip()
@@ -114,7 +127,7 @@ class ErShouSpider(BaseSpider):
 
                 # 作为对象保存
                 ershou = ErShou(chinese_district, chinese_area,
-                                house_id, name, price, unitPrice, desc, pic)
+                                house_id, name, xiaoqu, price, unitPrice, desc, tags, pic)
                 ershou_list.append(ershou)
         return ershou_list
 
@@ -122,8 +135,8 @@ class ErShouSpider(BaseSpider):
     def get_house_url(city: str, house_id: str):
         return "https://{0}.{1}.com/ershoufang/{2}.html".format(city, SPIDER_NAME, house_id)
 
-    def start(self):
-        city = get_city()
+    def start(self, city='bj'):
+        city = get_city(city=city)
         self.today_path = create_date_path(
             "{0}/ershou".format(SPIDER_NAME), city, self.date_string)
 
@@ -170,4 +183,5 @@ class ErShouSpider(BaseSpider):
 
 
 if __name__ == '__main__':
-    pass
+    spider = ErShouSpider(SPIDER_NAME)
+    spider.start()

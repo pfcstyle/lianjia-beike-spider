@@ -31,7 +31,7 @@ def get_areas(city, district):
     areas = list()
     try:
         headers = create_headers()
-        response = BaseSpider.get_html(page, timeout=10, headers=headers)
+        response = BaseSpider.request_get(page, timeout=10, headers=headers)
         html = response.content
         root = etree.HTML(html)
         links = root.xpath(DISTRICT_AREA_XPATH)
