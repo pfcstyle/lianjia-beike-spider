@@ -12,8 +12,9 @@ from lib.utility.date import *
 import lib.utility.version
 import random
 
-thread_pool_size = 6
-proxy_pool_url = 'http://127.0.0.1:5010'  # 参考proxy_pool项目，本地搭建的代理池地址
+thread_pool_size = 1
+# proxy_pool_url = 'http://127.0.0.1:5010'  # 参考proxy_pool项目，本地搭建的代理池地址
+proxy_pool_url = None
 
 # 防止爬虫被禁，随机延迟设定
 # 如果不想delay，就设定False，
@@ -83,6 +84,7 @@ class BaseSpider(object):
     
     @staticmethod
     def request_get(url: str, timeout=10, headers=None):
+        print(f"request url: {url}")
         if proxy_pool_url is None:
             return requests.get(url, timeout=timeout, headers=headers)
         proxy = BaseSpider.get_proxy(url.startswith('https://')).get("proxy")
